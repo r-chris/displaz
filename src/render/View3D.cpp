@@ -59,6 +59,7 @@ View3D::View3D(GeometryCollection* geometries, const QGLFormat& format, QWidget 
     connect(m_geometries, SIGNAL(layoutChanged()),                      this, SLOT(geometryChanged()));
     //connect(m_geometries, SIGNAL(destroyed()),                          this, SLOT(modelDestroyed()));
     connect(m_geometries, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(geometryChanged()));
+    connect(m_geometries, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex)));
     connect(m_geometries, SIGNAL(rowsInserted(QModelIndex,int,int)),    this, SLOT(geometryInserted(const QModelIndex&, int,int)));
     connect(m_geometries, SIGNAL(rowsRemoved(QModelIndex,int,int)),     this, SLOT(geometryChanged()));
 
@@ -102,7 +103,6 @@ void View3D::restartRender()
     update();
 }
 
-
 void View3D::geometryChanged()
 {
     if (m_geometries->rowCount() == 1 && !m_explicitCursorPos)
@@ -110,6 +110,12 @@ void View3D::geometryChanged()
     restartRender();
 }
 
+void View3D::dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
+{
+    // HACK!
+    geometryInserted(topLeft, topLeft.row(), bottomRight.row());
+    geometryChanged();
+}
 
 void View3D::geometryInserted(const QModelIndex& /*unused*/, int firstRow, int lastRow)
 {

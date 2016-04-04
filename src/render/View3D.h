@@ -82,6 +82,7 @@ class View3D : public QGLWidget
         void setupShaderParamUI();
 
         void geometryChanged();
+        void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
         void geometryInserted(const QModelIndex&, int firstRow, int lastRow);
 
     private:
