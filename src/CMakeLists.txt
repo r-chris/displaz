@@ -63,32 +63,33 @@ set(ipc_srcs
     IpcChannel.cpp
 )
 
-# GUI
-displaz_qt_wrap_cpp(gui_moc_srcs
+displaz_qt_wrap_cpp(render_moc_srcs
     fileloader.h
     geometrycollection.h
     HookFormatter.h
     HookManager.h
-
-    gui/DataSetUI.h
-    gui/DragSpinBox.h
-    gui/HelpDialog.h
-    gui/InteractiveCamera.h
-    gui/PointViewerMainWindow.h
-    gui/QtLogger.h
-    gui/ShaderEditor.h
+    InteractiveCamera.h
+    QtLogger.h
 
     render/Geometry.h
     render/HCloudView.h
-    render/View3D.h
     render/PointArray.h
     render/Shader.h
+    render/ShaderProgram.h
 )
 
-set(gui_srcs
-    ${util_srcs}
-    ${ipc_srcs}
-    ${gui_moc_srcs}
+# GUI
+displaz_qt_wrap_cpp(gui_moc_srcs
+    gui/DataSetUI.h
+    gui/DragSpinBox.h
+    gui/LogViewer.h
+    gui/HelpDialog.h
+    gui/PointViewerMainWindow.h
+    gui/ShaderEditor.h
+    gui/View3D.h
+)
+
+set(render_srcs
     DrawCostModel.cpp
     geometrycollection.cpp
     ply_io.cpp
@@ -97,19 +98,41 @@ set(gui_srcs
     HookFormatter.cpp
     HookManager.cpp
 
-    gui/DataSetUI.cpp
-    gui/guimain.cpp
-    gui/PointViewerMainWindow.cpp
-    gui/QtLogger.cpp
-    gui/ShaderEditor.cpp
-
     render/Geometry.cpp
     render/glutil.cpp
     render/HCloudView.cpp
     render/TriMesh.cpp
     render/PointArray.cpp
-    render/View3D.cpp
     render/Shader.cpp
+    render/ShaderProgram.cpp
+)
+
+set(gui_srcs
+    ${util_srcs}
+    ${ipc_srcs}
+    ${render_moc_srcs}
+    ${render_srcs}
+    ${gui_moc_srcs}
+
+    gui/DataSetUI.cpp
+    gui/guimain.cpp
+    gui/LogViewer.cpp
+    gui/PointViewerMainWindow.cpp
+    gui/ShaderEditor.cpp
+    gui/View3D.cpp
+
+    ../thirdparty/rply/rply.c
+    ../thirdparty/polypartition/polypartition.cpp
+)
+
+set(nanogui_srcs
+    ${util_srcs}
+    ${ipc_srcs}
+    #${render_moc_srcs}
+    #${render_srcs}
+
+    nanogui/nanoguimain.cpp
+    nanogui/NGApplication.cpp
 
     ../thirdparty/rply/rply.c
     ../thirdparty/polypartition/polypartition.cpp
@@ -129,6 +152,7 @@ endif()
 
 if(WIN32)
     list(APPEND gui_srcs ../package/windows_resources.rc)
+    list(APPEND nanogui_srcs ../package/windows_resources.rc)
 endif()
 
 if(WIN32)
@@ -143,6 +167,12 @@ include_directories(${PROJECT_BINARY_DIR})
 
 add_executable(displaz ${cli_srcs})
 add_executable(displaz-gui WIN32 ${gui_srcs} ${RCC_GENERATED})
+
+if(DISPLAZ_USE_NANOGUI)
+    add_definitions(${NANOGUI_EXTRA_DEFS})
+
+    add_executable(displaz-nanogui WIN32 ${nanogui_srcs} ${RCC_GENERATED})
+endif()
 
 if (DISPLAZ_BUILD_DVOX)
     add_executable(dvox
@@ -167,6 +197,14 @@ if (DISPLAZ_USE_QT4)
         ${OPENGL_gl_LIBRARY} ${GLEW_LIBRARIES}
         ${ILMBASE_LIBRARIES}
     )
+    if(DISPLAZ_USE_NANOGUI)
+        target_link_libraries(displaz-nanogui
+            ${QT_QTCORE_LIBRARY} ${QT_QTNETWORK_LIBRARY}
+            ${OPENGL_gl_LIBRARY} ${GLEW_LIBRARIES}
+            ${ILMBASE_LIBRARIES}
+            ${NANOGUI_LIBRARIES} ${NANOGUI_EXTRA_LIBS}
+        )
+    endif()
 else()
     target_link_libraries(displaz
         Qt5::Core Qt5::Network Qt5::Widgets
@@ -184,6 +222,17 @@ else()
     # TODO this is a workaround for Ubuntu 16.04 x86-64
     if (UNIX)
         add_definitions(-fPIC)
+    endif()
+    if(DISPLAZ_USE_NANOGUI)
+        target_link_libraries(displaz-nanogui
+            Qt5::Core Qt5::Network Qt5::OpenGL Qt5::Widgets
+            ${OPENGL_gl_LIBRARY} ${GLEW_LIBRARIES}
+            ${ILMBASE_LIBRARIES}
+            ${NANOGUI_LIBRARIES} ${NANOGUI_EXTRA_LIBS}
+        )
+        if (Qt5_POSITION_INDEPENDENT_CODE)
+            set_target_properties(displaz-nanogui PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
+        endif()
     endif()
 endif()
 
@@ -235,6 +284,10 @@ if (DISPLAZ_BUILD_DVOX)
     install(TARGETS dvox DESTINATION "${DISPLAZ_BIN_DIR}")
 endif()
 
+if(DISPLAZ_USE_NANOGUI)
+    install(TARGETS displaz-nanogui DESTINATION "${DISPLAZ_BIN_DIR}")
+endif()
+
 if(WIN32)
     # Install required qt libraries
     if (DISPLAZ_USE_QT4)
@@ -280,4 +333,3 @@ if (DISPLAZ_USE_TESTS)
     endif ()
     add_test(NAME InterProcessLock_test COMMAND InterProcessLock_test master)
 endif()
-

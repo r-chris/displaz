@@ -5,7 +5,6 @@
 #define QT_LOGGER_H_INCLUDED
 
 #include <QObject>
-#include <QPlainTextEdit>
 #include <QString>
 
 #include "logger.h"
@@ -40,30 +39,6 @@ class QtLogger : public QObject, public Logger
 
 /// Global displaz logger instance
 extern QtLogger g_logger;
-
-
-//------------------------------------------------------------------------------
-/// Viewer widget for log messages.
-///
-/// This is intended to work together with the Logger class as a frontend which
-/// does to the actual log message formatting.  The logger frontend is
-/// threadsafe, but LogViewer must run on the GUI thread.
-class LogViewer : public QPlainTextEdit
-{
-    Q_OBJECT
-    public:
-        LogViewer(QWidget* parent = 0);
-
-    public slots:
-        /// Connect given logger to the viewer.
-        ///
-        /// Note that for thread safety this must be a queued connection, hence
-        /// the special purpose method here.
-        void connectLogger(QtLogger* logger);
-
-        /// Append plain text message to the running log
-        void appendLogMessage(int logLevel, QString msg);
-};
 
 
 #endif // QT_LOGGER_H_INCLUDED

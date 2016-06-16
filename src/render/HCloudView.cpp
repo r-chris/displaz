@@ -8,6 +8,7 @@
 #include "glutil.h"
 #include "QtLogger.h"
 #include "Shader.h"
+#include "ShaderProgram.h"
 #include "streampagecache.h"
 #include "util.h"
 
@@ -409,4 +410,3 @@ bool HCloudView::pickVertex(const V3d& cameraPos,
     }
     return foundVertex;
 }
-

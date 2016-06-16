@@ -10,9 +10,11 @@
 #include "HelpDialog.h"
 #include "IpcChannel.h"
 #include "QtLogger.h"
+#include "LogViewer.h"
 #include "TriMesh.h"
 #include "ShaderEditor.h"
 #include "Shader.h"
+#include "ShaderProgram.h"
 #include "View3D.h"
 #include "HookFormatter.h"
 #include "HookManager.h"
@@ -708,5 +710,3 @@ void PointViewerMainWindow::updateTitle()
     }
     setWindowTitle(tr("Displaz - %1").arg(labels.join(", ")));
 }
-
-

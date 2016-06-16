@@ -33,6 +33,7 @@ else()
     # Qt4 build only supported on linux
     set(DISPLAZ_USE_QT4 FALSE)
 endif()
+option(DISPLAZ_USE_NANOGUI "Build NanoGUI as part of the displaz build process" FALSE)
 
 set(DISPLAZ_EXTERNAL_DIR "${PROJECT_BINARY_DIR}/../build_external/dist"
     CACHE PATH "Directory containing installed third party libraries (laslib, ilmbase, ...)")
@@ -113,6 +114,35 @@ endif()
 
 include_directories(${ILMBASE_INCLUDE_DIRS})
 
+
+if (DISPLAZ_USE_NANOGUI)
+    # I can't get access to all the sub includes this way # find_package(NanoGUI REQUIRED)
+
+    if(NOT IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/build_external/nanogui-prefix/src/nanogui/ext/glfw")
+      message(FATAL_ERROR "The NanoGUI dependency repositories (NanoGUI, GLFW, etc.) are missing! "
+        "You probably did not (re-)build the the external dependencies in build_external"
+    "from \"thirdparty/external\"")
+    endif()
+
+    set(NANOGUI_BUILD_EXAMPLE OFF CACHE BOOL " " FORCE)
+    set(NANOGUI_BUILD_SHARED  OFF CACHE BOOL " " FORCE)
+    set(NANOGUI_BUILD_PYTHON  OFF CACHE BOOL " " FORCE)
+
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/build_external/nanogui-prefix/src/nanogui ${CMAKE_CURRENT_SOURCE_DIR}/build_external/nanogui-prefix/src/nanogui-build)
+
+    find_path (NANOGUI_INCLUDE_DIRS NAMES nanogui/nanogui.h)
+    #find_library (NANOGUI_LIBRARY NAMES nanogui)
+    #set (NANOGUI_LIBRARIES ${NANOGUI_LIBRARY})
+    set (NANOGUI_LIBRARIES nanogui)
+    mark_as_advanced(NANOGUI_LIBRARY NANOGUI_LIBRARIES NANOGUI_INCLUDE_DIRS)
+
+    set_property(TARGET nanogui glfw glfw_objects bin2c PROPERTY FOLDER "dependencies")
+
+    include_directories(
+        ${NANOGUI_INCLUDE_DIRS}
+        ${NANOGUI_EXTRA_INCS}
+    )
+endif()
 
 #------------------------------------------------------------------------------
 # Install directory for binaries
@@ -236,4 +266,3 @@ endif()
 set(CPACK_STRIP_FILES TRUE)
 
 include(CPack)
-

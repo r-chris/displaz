@@ -7,6 +7,8 @@
 
 #include "QtLogger.h"
 
+QtLogger g_logger;
+
 //------------------------------------------------------------------------------
 // Utilities for interfacing with rply
 
