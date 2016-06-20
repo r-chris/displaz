@@ -133,6 +133,10 @@ set(nanogui_srcs
 
     nanogui/nanoguimain.cpp
     nanogui/NGApplication.cpp
+    nanogui/NGLogViewer.cpp
+    nanogui/NGPluginLoader.cpp
+    nanogui/NGShaderEditor.cpp
+    nanogui/NGShaderProgram.cpp
 
     ../thirdparty/rply/rply.c
     ../thirdparty/polypartition/polypartition.cpp
@@ -286,6 +290,7 @@ endif()
 
 if(DISPLAZ_USE_NANOGUI)
     install(TARGETS displaz-nanogui DESTINATION "${DISPLAZ_BIN_DIR}")
+    install(DIRECTORY plugins DESTINATION plugins FILES_MATCHING PATTERN "*.json")
 endif()
 
 if(WIN32)

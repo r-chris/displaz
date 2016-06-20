@@ -1,28 +1,14 @@
 #pragma once
 
 #include <nanogui/screen.h>
-#include <nanogui/window.h>
-#include <nanogui/layout.h>
-#include <nanogui/label.h>
-#include <nanogui/checkbox.h>
-#include <nanogui/button.h>
-#include <nanogui/toolbutton.h>
-#include <nanogui/popupbutton.h>
-#include <nanogui/combobox.h>
-#include <nanogui/progressbar.h>
-#include <nanogui/entypo.h>
-#include <nanogui/messagedialog.h>
-#include <nanogui/textbox.h>
-#include <nanogui/slider.h>
-#include <nanogui/imagepanel.h>
-#include <nanogui/imageview.h>
-#include <nanogui/vscrollpanel.h>
-#include <nanogui/colorwheel.h>
-#include <nanogui/graph.h>
-#if defined(_WIN32)
-    #include <windows.h>
-#endif
-#include <nanogui/glutil.h>
+// #if defined(_WIN32)
+//     #include <windows.h>
+// #endif
+
+#include "NGShaderEditor.h"
+#include "NGShaderProgram.h"
+#include "NGLogViewer.h"
+#include "NGPluginLoader.h"
 
 class NGApplication : public nanogui::Screen
 {
@@ -35,6 +21,10 @@ public:
     virtual void drawContents();
 
 private:
-    nanogui::ProgressBar *mProgress;
-    nanogui::GLShader mShader;
+    NGShaderEditor * mShaderEditor;
+    NGShaderProgram * mShaderProgram;
+    NGLogViewer * mLogViewer;
+    NGPluginLoader * mPluginLoader;
+    nanogui::ProgressBar * mProgress;
+
 };

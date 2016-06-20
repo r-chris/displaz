@@ -78,3 +78,34 @@ ExternalProject_Add(
 #     INSTALL_DIR "${CMAKE_INSTALL_PREFIX}"
 #     DOWNLOAD_DIR "${DOWNLOAD_DIR}"
 # )
+
+# ExternalProject_Add(
+#     libjson
+#     URL http://downloads.sourceforge.net/project/libjson/libjson_7.6.1.zip
+#     URL_MD5 82f3fcbf9f8cf3c4e25e1bdd77d65164
+#     TIMEOUT ${DOWNLOAD_TIMEOUT}
+#     DOWNLOAD_DIR ${THIRDPARTY_DOWNLOAD_DIR}
+#     PATCH_COMMAND cp ${ThirdParty_SOURCE_DIR}/libjson/CMakeLists.txt . && patch -p1 < ${ThirdParty_SOURCE_DIR}/libjson/config.patch
+#     CONFIGURE_COMMAND ${CCMAKE_COMMAND} ${SOURCE_DIR}
+#     CMAKE_ARGS
+#         -D CMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
+#         -D CMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+#         -D CMAKE_INSTALL_PREFIX:PATH=${LIBJSON_INSTALL_DIR}
+#     INSTALL_COMMAND make install
+#     BUILD_IN_SOURCE 0
+# )
+
+# URL https://github.com/miloyip/rapidjson/archive/v1.0.2.zip
+# URL_MD5 446a0673d58766e507d641412988dcaa
+
+ExternalProject_Add(
+    rapidjson
+    GIT_REPOSITORY https://github.com/miloyip/rapidjson
+    GIT_TAG 1c087b77cb7eb40a40aaf1d0f28feedc2d6e42ee
+    CMAKE_ARGS
+        -D CMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
+        -D CMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+        -D CMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+    INSTALL_DIR "${CMAKE_INSTALL_PREFIX}"
+    DOWNLOAD_DIR "${DOWNLOAD_DIR}"
+)

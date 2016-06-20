@@ -116,7 +116,8 @@ include_directories(${ILMBASE_INCLUDE_DIRS})
 
 
 if (DISPLAZ_USE_NANOGUI)
-    # I can't get access to all the sub includes this way # find_package(NanoGUI REQUIRED)
+    # I can't get access to all the sub includes this way: # find_package(NanoGUI REQUIRED)
+    # we have to build nanogui as a subdirectory instead :/
 
     if(NOT IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/build_external/nanogui-prefix/src/nanogui/ext/glfw")
       message(FATAL_ERROR "The NanoGUI dependency repositories (NanoGUI, GLFW, etc.) are missing! "
@@ -138,9 +139,12 @@ if (DISPLAZ_USE_NANOGUI)
 
     set_property(TARGET nanogui glfw glfw_objects bin2c PROPERTY FOLDER "dependencies")
 
+    find_path (RAPIDJSON_INCLUDE_DIRS NAMES rapidjson/rapidjson.h)
+
     include_directories(
         ${NANOGUI_INCLUDE_DIRS}
         ${NANOGUI_EXTRA_INCS}
+        ${RAPIDJSON_INCLUDE_DIRS}
     )
 endif()
 
