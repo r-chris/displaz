@@ -47,3 +47,14 @@ ExternalProject_Add(
     DOWNLOAD_DIR "${DOWNLOAD_DIR}"
 )
 
+ExternalProject_Add(
+    assimp
+    GIT_REPOSITORY https://github.com/assimp/assimp.git
+    GIT_TAG v3.2
+    CMAKE_ARGS
+        -D CMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
+        -D CMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+        -D CMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+    INSTALL_DIR "${CMAKE_INSTALL_PREFIX}"
+    DOWNLOAD_DIR "${DOWNLOAD_DIR}"
+)
